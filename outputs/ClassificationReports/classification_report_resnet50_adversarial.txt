@@ -1,0 +1,20 @@
+==================================================
+Overall Emotion Classification Report (Validation Set)
+==================================================
+              precision    recall  f1-score   support
+
+      angry       0.55      0.50      0.53       930
+    disgust       0.53      0.31      0.39       233
+       fear       0.47      0.40      0.43       869
+      happy       0.86      0.85      0.86      2355
+    neutral       0.62      0.60      0.61      1509
+        sad       0.50      0.65      0.56      1346
+   surprise       0.77      0.74      0.75       888
+
+    accuracy                           0.66      8130
+   macro avg       0.61      0.58      0.59      8130
+weighted avg       0.66      0.66      0.65      8130
+
+==================================================
+Overall Emotion Confusion Matrix (Validation Set)
+==================================================
