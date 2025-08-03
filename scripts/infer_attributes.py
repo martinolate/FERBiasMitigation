@@ -199,13 +199,18 @@ def main(input_dir: str, output_csv: str, log_file: str, max_workers: int, verbo
     logger.info(f"Using up to {max_workers} parallel workers.")
 
     # --- Process Images in Parallel ---
-    # Define the CSV header with inferred attributes
-    csv_header = ["image_path", "gender", "age", "race"]
+    # Define the CSV header with inferred attributes, including processing status
+    csv_header = ["image_path", "status", "gender", "age", "race"]
 
     # Determine if CSV header needs to be written
     # Ensure header is written if file is new, empty, or if we reset processed_paths due to read error/bad header
-    write_header = not os.path.exists(output_csv) or os.path.getsize(output_csv) == 0 or (os.path.exists(output_csv) and not processed_paths and os.path.getsize(output_csv) > 0)
+    write_header = (
+        not os.path.exists(output_csv)
+        or os.path.getsize(output_csv) == 0
+        or (os.path.exists(output_csv) and not processed_paths and os.path.getsize(output_csv) > 0)
+    )
 
+    processed_count = 0  # Track number of processed images; defined outside try to avoid UnboundLocalError
 
     try:
         with open(output_csv, "a", newline="", encoding='utf-8') as csvfile:
@@ -215,7 +220,6 @@ def main(input_dir: str, output_csv: str, log_file: str, max_workers: int, verbo
                 writer.writerow(csv_header)
                 logger.info("CSV header written.")
 
-            processed_count = 0
             total_to_process = len(to_process)
             print(f"🟢 Starting processing of {total_to_process} images...")
 
@@ -226,8 +230,8 @@ def main(input_dir: str, output_csv: str, log_file: str, max_workers: int, verbo
                     # Unpack results - ignore race_scores (_ placeholder)
                     img_path_res, status, gender_res, age_res, dom_race_res, _ = future.result()
 
-                    # Prepare row data: image_path, gender, age, race; missing attributes remain empty
-                    row_data = [img_path_res, gender_res, age_res, dom_race_res]
+                    # Prepare row data: image_path, status, gender, age, race; missing attributes remain empty
+                    row_data = [img_path_res, status, gender_res, age_res, dom_race_res]
                     writer.writerow(row_data)
 
                     processed_count += 1
@@ -235,12 +239,14 @@ def main(input_dir: str, output_csv: str, log_file: str, max_workers: int, verbo
 
                     if processed_count % 50 == 0 or processed_count == total_to_process:
                         # Log progress at DEBUG level to avoid console spam
-                        logger.debug(f"Progress: {processed_count}/{total_to_process} images processed.")
+                        logger.debug(
+                            f"Progress: {processed_count}/{total_to_process} images processed."
+                        )
 
     except IOError as e:
-         logger.critical(f"Could not write to output CSV file {output_csv}: {e}")
+        logger.critical(f"Could not write to output CSV file {output_csv}: {e}")
     except Exception as e:
-         logger.critical(f"An unexpected error occurred during processing: {e}", exc_info=True)
+        logger.critical(f"An unexpected error occurred during processing: {e}", exc_info=True)
     finally:
         print("🏁 Processing complete.")
         logger.info(f"Finished processing loop. Attempted {processed_count} images in this run.")
