@@ -104,26 +104,33 @@ def analyze_image(img_path: str) -> Tuple[str, str, str, str, str, Dict[str, flo
             silent=True
         )
 
-        if isinstance(analysis_result, list) and len(analysis_result) > 0:
-            analysis = analysis_result[0]
-
-            gender = analysis.get("dominant_gender", analysis.get("gender", ""))
-            age = analysis.get("age", "")
-            dominant_race = analysis.get("dominant_race", "")
-            race_scores = analysis.get("race", {}) # Get scores even if unused later
-
-            region = analysis.get("region", {})
-            if (region.get("w", 0) == 0 and region.get("h", 0) == 0) or \
-               (not gender and not age and not dominant_race): # Adjusted check
-                 logger.debug(f"No face detected or no primary attributes found in: {img_path}")
-                 return img_path, "NoFace", "", "", "", {}
-            else:
-                 logger.debug(f"Analysis OK for {img_path}: Gender={gender}, Age={age}, Race={dominant_race}")
-                 return img_path, "OK", str(gender), str(age), str(dominant_race), race_scores
-
+        if isinstance(analysis_result, list):
+            # DeepFace may return a list when multiple faces are detected
+            analysis = analysis_result[0] if analysis_result else {}
+        elif isinstance(analysis_result, dict):
+            analysis = analysis_result
         else:
-            logger.warning(f"Unexpected result format or no face detected in {img_path}. Result: {analysis_result}")
+            logger.warning(
+                f"Unexpected result format or no face detected in {img_path}. Result: {analysis_result}"
+            )
             return img_path, "NoFace", "", "", "", {}
+
+        gender = analysis.get("dominant_gender", analysis.get("gender", ""))
+        age = analysis.get("age", "")
+        dominant_race = analysis.get("dominant_race", "")
+        race_scores = analysis.get("race", {})  # Get scores even if unused later
+
+        region = analysis.get("region", {})
+        if (region.get("w", 0) == 0 and region.get("h", 0) == 0) or (
+            not gender and not age and not dominant_race
+        ):  # Adjusted check
+            logger.debug(f"No face detected or no primary attributes found in: {img_path}")
+            return img_path, "NoFace", "", "", "", {}
+        else:
+            logger.debug(
+                f"Analysis OK for {img_path}: Gender={gender}, Age={age}, Race={dominant_race}"
+            )
+            return img_path, "OK", str(gender), str(age), str(dominant_race), race_scores
 
     except Exception as e:
         logger.error(f"Error analyzing {img_path}: {e}", exc_info=True)
