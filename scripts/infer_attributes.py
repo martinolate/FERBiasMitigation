@@ -176,16 +176,16 @@ def main(input_dir: str, output_csv: str, log_file: str, max_workers: int, verbo
                     logger.info(f"Found {len(processed_paths)} images already in {output_csv}. Resuming.")
                     print(f"🗃️  Skipping {len(processed_paths)} already processed images")
                 elif header: # File has a header but not the expected one
-                     logger.warning(f"CSV file {output_csv} exists but has unexpected header: {header}. Will append with the correct header, possibly creating duplicates if resuming or mixing formats.")
+                    logger.warning(f"CSV file {output_csv} exists but has unexpected header: {header}. Will append with the correct header, possibly creating duplicates if resuming or mixing formats.")
                 else: # File exists but is empty or has no header
                     logger.info(f"CSV file {output_csv} exists but is empty or lacks a header. Starting fresh.")
                     processed_paths = set() # Treat as fresh start
         except FileNotFoundError:
-             logger.info(f"Output CSV {output_csv} not found. Starting fresh.")
-             processed_paths = set()
+            logger.info(f"Output CSV {output_csv} not found. Starting fresh.")
+            processed_paths = set()
         except StopIteration:
-             logger.info(f"Output CSV {output_csv} exists but is empty. Starting fresh.")
-             processed_paths = set()
+            logger.info(f"Output CSV {output_csv} exists but is empty. Starting fresh.")
+            processed_paths = set()
         except Exception as e:
             logger.error(f"Could not read existing CSV {output_csv} to check for processed files: {e}. Processing all images, potentially creating duplicates.")
             processed_paths = set()
