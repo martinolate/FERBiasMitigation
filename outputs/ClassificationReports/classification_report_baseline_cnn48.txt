@@ -1,4 +1,4 @@
-npy_Classification Report - Baseline Model (cnn48)
+Classification Report - Baseline Model (cnn48)
 
               precision    recall  f1-score   support
 
