@@ -1,0 +1,27 @@
+# Fairness-Aware Facial Emotion Recognition Dependencies
+# Pin specific versions for reproducible environment
+
+# Deep Learning Framework
+tensorflow==2.16.1
+
+# Face analysis library
+deepface==0.0.92
+
+# Core scientific computing
+numpy==1.26.4
+
+# Data manipulation and analysis
+pandas==2.2.2
+
+# Machine learning library
+scikit-learn==1.4.2
+
+# Plotting library
+matplotlib==3.8.4
+
+# Computer vision library
+opencv-python==4.9.0.80
+
+# Additional dependencies mentioned in README (not pinned as per requirements)
+seaborn
+jupyter

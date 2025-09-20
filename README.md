@@ -65,6 +65,10 @@ notebooks/01_preprocessing.ipynb
 
 Install dependencies:
 ```bash
+# Option 1: Install from requirements.txt (recommended for reproducible environment)
+pip install -r requirements.txt
+
+# Option 2: Install individual packages
 pip install deepface tensorflow numpy pandas scikit-learn seaborn matplotlib opencv-python jupyter
 ```
 
